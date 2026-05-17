@@ -47,58 +47,59 @@
             </p>
         </section>
 
-        <section class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+        <section class="max-w-4xl mx-auto">
 
-            <div
-                class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10 transition duration-300 hover:border-cyan-400/40">
+            <div class="flex justify-center mb-10">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-2 flex gap-2">
+                    <button onclick="showFlow('authCode')" id="authCodeBtn"
+                        class="flow-btn bg-cyan-500 text-black font-semibold px-5 py-3 rounded-xl transition">
+                        Authorization Code
+                    </button>
 
-                <h2 class="text-3xl font-bold mb-4">
+                    <button onclick="showFlow('clientCredentials')" id="clientCredentialsBtn"
+                        class="flow-btn text-slate-300 hover:text-white px-5 py-3 rounded-xl transition">
+                        Client Credentials
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
+
+                <h2 id="flowTitle" class="text-3xl font-bold mb-4">
                     Authorization Code Flow
                 </h2>
 
-                <p class="text-slate-300 mb-8">
+                <p id="flowDescription" class="text-slate-300 mb-4">
                     Used when a user signs in through an authorization server and the application receives an
                     authorization code that is exchanged for tokens.
                 </p>
-
-                <div class="space-y-4 text-sm">
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">User</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Client Application</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Authorization Server</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Authorization Code</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Access Token</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Protected API</div>
-                </div>
-
-            </div>
-
-            <div
-                class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10 transition duration-300 hover:border-cyan-400/40">
-
-                <h2 class="text-3xl font-bold mb-4">
-                    Client Credentials Flow
-                </h2>
-
-                <p class="text-slate-300 mb-8">
-                    Used for machine-to-machine communication where a backend service authenticates directly without a
-                    user.
+                <p id="flowSummary" class="text-cyan-400 text-sm mb-8">
+                    Browser-based user login flow using redirect-based authentication.
                 </p>
 
-                <div class="space-y-4 text-sm">
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Backend Service</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Client ID + Client Secret</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Token Endpoint</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Access Token</div>
-                    <div class="text-cyan-400 text-center">↓</div>
-                    <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">Protected API</div>
+                <div id="flowSteps" class="space-y-4 text-sm mb-10"></div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-cyan-400">
+                            Tokens involved
+                        </h3>
+                        <ul id="tokenList" class="space-y-2 text-slate-300"></ul>
+                    </div>
+
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-amber-400">
+                            Security notes
+                        </h3>
+                        <ul id="securityNotes" class="space-y-2 text-slate-300"></ul>
+                    </div>
+
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-emerald-400">
+                            Used for
+                        </h3>
+                        <ul id="usedForList" class="space-y-2 text-slate-300"></ul>
+                    </div>
                 </div>
 
             </div>
@@ -106,7 +107,139 @@
         </section>
 
     </main>
+    <script>
+        const flows = {
+            authCode: {
+                title: "Authorization Code Flow",
+                description:
+                    "Used when a user signs in through an authorization server. The application receives an authorization code and exchanges it for tokens at the token endpoint.",
 
+                summary:
+                    "Browser-based user login flow using redirect-based authentication.",
+
+                steps: [
+                    { label: "User", detail: "Resource owner", type: "actor" },
+                    { label: "Client Application", detail: "Web app / SPA / mobile app", type: "app" },
+                    { label: "Authorization Server", detail: "Login and consent", type: "server" },
+                    { label: "Login / Consent", detail: "User authenticates", type: "action" },
+                    { label: "Authorization Code", detail: "Short-lived temporary code", type: "code" },
+                    { label: "Token Endpoint", detail: "Code exchanged server-side", type: "server" },
+                    { label: "Access Token", detail: "Bearer token for API calls", type: "token" },
+                    { label: "Protected API", detail: "Resource server", type: "api" }
+                ],
+                tokens: [
+                    "Authorization code",
+                    "Access token",
+                    "Refresh token, if offline access is allowed",
+                    "ID token, if OpenID Connect is used"
+                ],
+                notes: [
+                    "Use PKCE for public clients and browser-based flows.",
+                    "Never expose client secrets in frontend code.",
+                    "Validate redirect URIs strictly.",
+                    "Keep access tokens short-lived."
+                ],
+                usedFor: [
+                    "Web applications",
+                    "Single Page Applications with PKCE",
+                    "Mobile applications",
+                    "Microsoft Entra ID / Google Sign-In scenarios"
+                ]
+            },
+
+            clientCredentials: {
+                title: "Client Credentials Flow",
+                description:
+                    "Used for machine-to-machine communication. A backend service authenticates directly with a client ID and client secret, then receives an access token.",
+                summary:
+                    "Machine-to-machine backend authentication flow without user interaction.",
+                steps: [
+                    { label: "Backend Service", detail: "Machine-to-machine client", type: "app" },
+                    { label: "Client ID + Client Secret", detail: "Application credentials", type: "secret" },
+                    { label: "Token Endpoint", detail: "Issues access token", type: "server" },
+                    { label: "Access Token", detail: "Bearer token for API calls", type: "token" },
+                    { label: "Protected API", detail: "Resource server", type: "api" }
+                ],
+                tokens: [
+                    "Access token",
+                    "No user token",
+                    "No ID token unless OpenID Connect is involved",
+                    "Usually no refresh token"
+                ],
+                notes: [
+                    "Store client secrets only on secure backend systems.",
+                    "Use narrow scopes and least privilege.",
+                    "Rotate secrets regularly.",
+                    "Prefer managed identities where available, for example in Azure."
+                ],
+                usedFor: [
+                    "Backend services",
+                    "Microservices",
+                    "Scheduled jobs",
+                    "Server-to-server API integrations"
+                ]
+            }
+        };
+
+        function stepClass(type) {
+            const classes = {
+                actor: "bg-slate-800 border-slate-700",
+                app: "bg-blue-950/60 border-blue-500/30",
+                server: "bg-purple-950/60 border-purple-500/30",
+                action: "bg-slate-800 border-slate-700",
+                code: "bg-amber-950/60 border-amber-500/30 text-amber-200",
+                token: "bg-cyan-950/60 border-cyan-500/30 text-cyan-200",
+                secret: "bg-red-950/60 border-red-500/30 text-red-200",
+                api: "bg-emerald-950/60 border-emerald-500/30 text-emerald-200"
+            };
+
+            return classes[type] || "bg-slate-800 border-slate-700";
+        }
+
+        function showFlow(flowKey) {
+            const flow = flows[flowKey];
+
+            document.getElementById("flowTitle").textContent = flow.title;
+            document.getElementById("flowDescription").textContent = flow.description;
+            document.getElementById("flowSummary").textContent = flow.summary;
+
+            document.getElementById("flowSteps").innerHTML = flow.steps
+                .map((step, index) => `
+                <div class="bg-slate-800 rounded-xl py-3 px-4 border ${stepClass(step.type)} transition duration-300 hover:scale-[1.01] hover:shadow-lg">
+                    <div class="font-semibold">${step.label}</div>
+                    ${step.detail ? `<div class="text-xs text-slate-400 mt-1">${step.detail}</div>` : ""}
+                </div>
+                ${index < flow.steps.length - 1 ? '<div class="text-cyan-400 text-center text-2xl font-bold">↓</div>' : ''}
+            `)
+                .join("");
+
+            document.getElementById("tokenList").innerHTML = flow.tokens
+                .map(token => `<li>✔ ${token}</li>`)
+                .join("");
+
+            document.getElementById("securityNotes").innerHTML = flow.notes
+                .map(note => `<li>⚠ ${note}</li>`)
+                .join("");
+
+            document.getElementById("usedForList").innerHTML = flow.usedFor
+                .map(item => `<li>• ${item}</li>`)
+                .join("");
+
+            document.querySelectorAll(".flow-btn").forEach(btn => {
+                btn.classList.remove("bg-cyan-500", "text-black", "font-semibold");
+                btn.classList.add("text-slate-300");
+            });
+
+            const activeBtn = document.getElementById(flowKey + "Btn");
+            activeBtn.classList.add("bg-cyan-500", "text-black", "font-semibold");
+            activeBtn.classList.remove("text-slate-300");
+        }
+
+        showFlow("authCode");
+    </script>
+    <footer class="border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
+        Built by Concilio Design AB · OAuth2 Visualizer
+    </footer>
 </body>
 
 </html>
