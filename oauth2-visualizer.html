@@ -106,6 +106,180 @@
 
         </section>
 
+        <section class="max-w-6xl mx-auto mt-24">
+            <div class="border-t border-slate-800 pt-16">
+                <div class="text-cyan-400 uppercase tracking-widest text-sm mb-4">
+                    Real-World Examples
+                </div>
+
+                <h2 class="text-4xl font-bold mb-4">
+                    Real-World Examples
+                </h2>
+
+                <p class="text-slate-300 text-lg max-w-3xl mb-6">
+                    OAuth2 can feel complicated, so here are two simple examples with realistic-looking values.
+                    The important idea is: the app first proves who it is, then receives a token, and then uses that
+                    token to call an API.
+                </p>
+
+                <div class="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-5 text-amber-200 mb-10">
+                    Example values below are fictional and provided for educational purposes only. Do not use them as
+                    real client IDs, secrets, URLs or tokens.
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10">
+                        <div class="text-cyan-400 text-sm uppercase tracking-widest mb-3">
+                            Example 1 — Authorization Code
+                        </div>
+
+                        <h3 class="text-3xl font-bold mb-4">
+                            Sign in with Microsoft
+                        </h3>
+
+                        <p class="text-slate-300 mb-6">
+                            A person signs in to the app. First, the app receives a temporary login code. Then the app
+                            exchanges that code for an access token that allows it to call APIs.
+
+                            An access token is like a temporary digital key that allows an app to use an API on behalf
+                            of a user or system.
+                        </p>
+
+                        <ol class="space-y-4 text-slate-300">
+                            <li>
+                                <span class="text-cyan-400 font-semibold">1.</span>
+                                The user opens the app:
+                                <div
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-cyan-100 font-mono overflow-x-auto break-words">
+                                    https://portal.contoso-app.com
+                                </div>
+                            </li>
+
+                            <li>
+                                <span class="text-cyan-400 font-semibold">2.</span>
+                                The user clicks <span class="text-white font-semibold">Sign in with Microsoft</span>.
+                            </li>
+
+                            <li>
+                                <span class="text-cyan-400 font-semibold">3.</span>
+                                The browser goes to the login server:
+                                <div
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-cyan-100 font-mono overflow-x-auto break-words">
+                                    https://login.microsoftonline.com/contoso/oauth2/v2.0/authorize
+                                </div>
+                            </li>
+
+                            <li>
+                                <span class="text-cyan-400 font-semibold">4.</span>
+                                The app sends a login request with these values:
+                                <div class="text-slate-400 mt-1 text-sm">
+                                    These values tell Microsoft which app is asking, what access it wants, and where the
+                                    user should be sent back after login.
+                                </div>
+                                <pre
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-cyan-100 font-mono overflow-x-auto"><code>client_id=84f2a9ab-demo-client
+scope=openid profile email User.Read
+redirect_uri=https://portal.contoso-app.com/callback
+response_type=code</code></pre>
+                            </li>
+
+                            <li>
+                                <span class="text-cyan-400 font-semibold">5.</span>
+                                After login, the app receives a temporary login code:
+                                <div
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-amber-200 font-mono overflow-x-auto break-words">
+                                    code=OAQABAAIAAAD-demo-code
+                                </div>
+                            </li>
+
+                            <li>
+                                <span class="text-cyan-400 font-semibold">6.</span>
+                                The backend swaps the temporary login code for an API access token:
+                                <div
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-cyan-100 font-mono overflow-x-auto break-words">
+                                    POST /oauth2/v2.0/token
+                                </div>
+                            </li>
+
+                            <li>
+                                <span class="text-cyan-400 font-semibold">7.</span>
+                                The app can now call Microsoft Graph:
+                                <pre
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-emerald-200 font-mono overflow-x-auto"><code>GET https://graph.microsoft.com/v1.0/me
+Authorization: Bearer eyJhbGciOiJSUzI1Ni-demo-token</code></pre>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div
+                        class="bg-slate-900 rounded-2xl p-8 border border-purple-500/20 shadow-2xl shadow-purple-500/10">
+                        <div class="text-purple-400 text-sm uppercase tracking-widest mb-3">
+                            Example 2 — Client Credentials
+                        </div>
+
+                        <h3 class="text-3xl font-bold mb-4">
+                            Backend Service Integration
+                        </h3>
+
+                        <p class="text-slate-300 mb-6">
+                            This is used when one computer system talks to another computer system. No person signs in.
+                            Instead, the backend service proves its identity and receives an access token for API
+                            access.
+                            An access token is like a temporary digital key that allows one system to securely use
+                            another system’s API.
+                        </p>
+
+                        <ol class="space-y-4 text-slate-300">
+                            <li>
+                                <span class="text-purple-400 font-semibold">1.</span>
+                                A nightly backend job starts automatically.
+                            </li>
+
+                            <li>
+                                <span class="text-purple-400 font-semibold">2.</span>
+                                The backend service identifies itself:
+                                <pre
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-cyan-100 font-mono overflow-x-auto"><code>client_id=inventory-sync-service
+client_secret=••••••••••••••••</code></pre>
+                            </li>
+
+                            <li>
+                                <span class="text-purple-400 font-semibold">3.</span>
+                                The backend asks the login server for an API access token:
+                                <pre
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-cyan-100 font-mono overflow-x-auto"><code>POST /oauth2/v2.0/token
+grant_type=client_credentials
+scope=api://inventory-api/.default</code></pre>
+                            </li>
+
+                            <li>
+                                <span class="text-purple-400 font-semibold">4.</span>
+                                The login server returns an access token:
+                                <div
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-cyan-200 font-mono overflow-x-auto break-words">
+                                    access_token=eyJhbGciOiJSUzI1Ni-demo-token
+                                </div>
+                            </li>
+
+                            <li>
+                                <span class="text-purple-400 font-semibold">5.</span>
+                                The backend calls the protected API:
+                                <pre
+                                    class="mt-2 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-emerald-200 font-mono overflow-x-auto"><code>POST https://api.contoso-inventory.com/orders
+Authorization: Bearer eyJhbGciOiJSUzI1Ni-demo-token</code></pre>
+                            </li>
+
+                            <li>
+                                <span class="text-purple-400 font-semibold">6.</span>
+                                The systems can now synchronize data automatically.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
     </main>
     <script>
         const flows = {
