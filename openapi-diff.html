@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAPI Diff | Concilio Design</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-white">
+
+    <nav class="w-full fixed top-0 left-0 z-50 bg-slate-950/70 backdrop-blur border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+
+            <a href="index.html" class="text-xl font-bold tracking-tight hover:text-cyan-400 transition">
+                Concilio Design
+            </a>
+
+            <div class="flex items-center gap-4 md:gap-8 text-slate-300 text-sm">
+                <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+                <a href="index.html#tools" class="hover:text-cyan-400 transition">Tools</a>
+                <a href="index.html#about" class="hover:text-cyan-400 transition">About</a>
+                <a href="https://github.com/joacar999/conciliodesign-site" target="_blank" rel="noopener noreferrer"
+                    class="hover:text-cyan-400 transition">
+                    GitHub
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <main class="pt-32 px-6 pb-32">
+
+        <section class="max-w-5xl mx-auto text-center mb-16">
+            <div class="mb-4 text-cyan-400 uppercase tracking-widest text-sm">
+                API Lifecycle Tool
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+                OpenAPI Diff
+            </h1>
+
+            <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                Compare two OpenAPI specifications and highlight important API changes before they break integrations.
+            </p>
+        </section>
+
+        <section class="max-w-6xl mx-auto">
+
+            <div class="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-5 text-amber-200 mb-8">
+                This first version uses demo diff output. It is designed to show the workflow and explain common API
+                change types. Full OpenAPI parsing can be added later.
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10 mb-8">
+
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Compare API specs</h2>
+                        <p id="exampleLabel" class="text-slate-400 mt-1">
+                            Load an example or paste your own OpenAPI snippets.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="loadExampleSpecs()"
+                            class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-xl transition duration-300">
+                            Load Example Specs
+                        </button>
+
+                        <button onclick="compareSpecs()"
+                            class="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-6 py-3 rounded-xl transition duration-300 shadow-xl shadow-cyan-500/20 hover:scale-[1.01]">
+                            Compare Specs
+                        </button>
+
+                        <button onclick="clearSpecs()"
+                            class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold px-6 py-3 rounded-xl transition duration-300">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div>
+                        <label for="oldSpec" class="block text-lg font-semibold mb-3 text-cyan-400">
+                            Old OpenAPI Spec
+                        </label>
+                        <textarea id="oldSpec" rows="18"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-200 font-mono text-sm focus:outline-none focus:border-cyan-500"
+                            placeholder="Paste old OpenAPI JSON/YAML here..."></textarea>
+                    </div>
+
+                    <div>
+                        <label for="newSpec" class="block text-lg font-semibold mb-3 text-emerald-400">
+                            New OpenAPI Spec
+                        </label>
+                        <textarea id="newSpec" rows="18"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-200 font-mono text-sm focus:outline-none focus:border-emerald-500"
+                            placeholder="Paste new OpenAPI JSON/YAML here..."></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grid lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-slate-900 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/5">
+                    <h3 class="text-xl font-bold mb-3 text-emerald-400">Added</h3>
+                    <div id="addedOutput" class="text-slate-300 text-sm space-y-2">
+                        <p>Added endpoints or fields will appear here.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-red-500/20 shadow-xl shadow-red-500/5">
+                    <h3 class="text-xl font-bold mb-3 text-red-400">Removed</h3>
+                    <div id="removedOutput" class="text-slate-300 text-sm space-y-2">
+                        <p>Removed endpoints or fields will appear here.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-amber-500/20 shadow-xl shadow-amber-500/5">
+                    <h3 class="text-xl font-bold mb-3 text-amber-400">Breaking</h3>
+                    <div id="breakingOutput" class="text-slate-300 text-sm space-y-2">
+                        <p>Breaking changes will appear here.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-purple-500/20 shadow-xl shadow-purple-500/5">
+                    <h3 class="text-xl font-bold mb-3 text-purple-400">Schemas</h3>
+                    <div id="schemaOutput" class="text-slate-300 text-sm space-y-2">
+                        <p>Changed schemas or fields will appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <section class="mt-16 bg-slate-900 rounded-2xl p-8 border border-slate-800">
+                <h2 class="text-3xl font-bold mb-4">
+                    What does this tool help with?
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-6 text-slate-300">
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                        <h3 class="text-emerald-400 font-semibold mb-2">Added APIs</h3>
+                        <p>Shows new endpoints, fields or operations that clients may start using.</p>
+                    </div>
+
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                        <h3 class="text-red-400 font-semibold mb-2">Removed APIs</h3>
+                        <p>Highlights endpoints or fields that disappeared and may break integrations.</p>
+                    </div>
+
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                        <h3 class="text-amber-400 font-semibold mb-2">Breaking Changes</h3>
+                        <p>Calls out changes that may require code, testing or contract updates.</p>
+                    </div>
+                </div>
+            </section>
+
+        </section>
+
+    </main>
+
+    <script>
+        let currentExampleIndex = 0;
+        let currentExampleResult = null;
+
+        const examples = [
+            {
+                name: "Orders API",
+                oldSpec: `openapi: 3.0.0
+info:
+  title: Orders API
+  version: 1.0.0
+paths:
+  /orders:
+    get:
+      summary: List orders
+    post:
+      summary: Create order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - customerId
+  /orders/{id}:
+    get:
+      summary: Get order by id`,
+                newSpec: `openapi: 3.0.0
+info:
+  title: Orders API
+  version: 1.1.0
+paths:
+  /orders:
+    get:
+      summary: List orders
+    post:
+      summary: Create order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - customerId
+                - currency
+  /orders/{id}:
+    get:
+      summary: Get order by id
+  /orders/search:
+    get:
+      summary: Search orders`,
+                result: {
+                    added: ["GET /orders/search"],
+                    removed: [],
+                    breaking: ["POST /orders now requires currency"],
+                    schemas: ["OrderCreateRequest required fields changed"]
+                }
+            },
+            {
+                name: "Inventory API",
+                oldSpec: `openapi: 3.0.0
+info:
+  title: Inventory API
+  version: 2.0.0
+paths:
+  /products:
+    get:
+      summary: List products
+  /products/{id}:
+    get:
+      summary: Get product
+  /stock:
+    get:
+      summary: Get stock levels
+  /warehouses:
+    get:
+      summary: List warehouses`,
+                newSpec: `openapi: 3.0.0
+info:
+  title: Inventory API
+  version: 2.1.0
+paths:
+  /products:
+    get:
+      summary: List products
+  /products/{id}:
+    get:
+      summary: Get product
+  /stock-levels:
+    get:
+      summary: Get stock levels`,
+                result: {
+                    added: ["GET /stock-levels"],
+                    removed: ["GET /stock", "GET /warehouses"],
+                    breaking: ["Stock endpoint renamed from /stock to /stock-levels"],
+                    schemas: ["ProductStock response now uses quantityAvailable instead of stock"]
+                }
+            },
+            {
+                name: "Payments API",
+                oldSpec: `openapi: 3.0.0
+info:
+  title: Payments API
+  version: 1.0.0
+paths:
+  /payments:
+    post:
+      summary: Create payment
+      security:
+        - apiKey: []
+  /payments/{id}:
+    get:
+      summary: Get payment`,
+                newSpec: `openapi: 3.0.0
+info:
+  title: Payments API
+  version: 2.0.0
+paths:
+  /payments:
+    post:
+      summary: Create payment
+      security:
+        - oauth2:
+            - payments.write
+  /payments/{id}:
+    get:
+      summary: Get payment
+      security:
+        - oauth2:
+            - payments.read
+  /refunds:
+    post:
+      summary: Create refund`,
+                result: {
+                    added: ["POST /refunds"],
+                    removed: [],
+                    breaking: ["Authentication changed from API key to OAuth2", "POST /payments now requires payments.write scope"],
+                    schemas: ["PaymentRequest now requires idempotencyKey"]
+                }
+            },
+            {
+                name: "Customer API",
+                oldSpec: `openapi: 3.0.0
+info:
+  title: Customer API
+  version: 1.0.0
+paths:
+  /customers:
+    get:
+      summary: List customers
+  /customers/{id}:
+    get:
+      summary: Get customer
+components:
+  schemas:
+    Customer:
+      properties:
+        phone:
+          type: string`,
+                newSpec: `openapi: 3.0.0
+info:
+  title: Customer API
+  version: 1.2.0
+paths:
+  /customers:
+    get:
+      summary: List customers
+  /customers/{id}:
+    get:
+      summary: Get customer
+  /customers/{id}/addresses:
+    get:
+      summary: Get customer addresses
+components:
+  schemas:
+    Customer:
+      properties:
+        phoneNumber:
+          type: string`,
+                result: {
+                    added: ["GET /customers/{id}/addresses"],
+                    removed: [],
+                    breaking: ["Customer.phone renamed to Customer.phoneNumber"],
+                    schemas: ["Customer schema changed: phone → phoneNumber"]
+                }
+            },
+            {
+                name: "Developer Platform API",
+                oldSpec: `openapi: 3.0.0
+info:
+  title: Developer Platform API
+  version: 2025-01
+paths:
+  /repositories:
+    get:
+      summary: List repositories
+  /workflows:
+    get:
+      summary: List workflows
+  /deployments:
+    post:
+      summary: Create deployment`,
+                newSpec: `openapi: 3.0.0
+info:
+  title: Developer Platform API
+  version: 2026-01
+paths:
+  /repositories:
+    get:
+      summary: List repositories
+  /actions/workflows:
+    get:
+      summary: List workflows
+  /deployments:
+    post:
+      summary: Create deployment
+  /deployments/{id}/logs:
+    get:
+      summary: Get deployment logs`,
+                result: {
+                    added: ["GET /deployments/{id}/logs", "GET /actions/workflows"],
+                    removed: ["GET /workflows"],
+                    breaking: ["Workflow endpoint moved from /workflows to /actions/workflows"],
+                    schemas: ["Deployment response now includes statusReason"]
+                }
+            }
+        ];
+
+        function renderList(elementId, items, emptyMessage, prefix) {
+            const element = document.getElementById(elementId);
+
+            if (!items || items.length === 0) {
+                element.innerHTML = `<p>${emptyMessage}</p>`;
+                return;
+            }
+
+            element.innerHTML = items
+                .map(item => `<div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3">${prefix} ${item}</div>`)
+                .join("");
+        }
+
+        function loadExampleSpecs() {
+            const example = examples[currentExampleIndex];
+
+            document.getElementById("oldSpec").value = example.oldSpec;
+            document.getElementById("newSpec").value = example.newSpec;
+            document.getElementById("exampleLabel").textContent = `Loaded example: ${example.name}`;
+
+            currentExampleResult = example.result;
+
+            clearResults();
+
+            currentExampleIndex = (currentExampleIndex + 1) % examples.length;
+        }
+
+        function compareSpecs() {
+            const oldSpec = document.getElementById("oldSpec").value.trim();
+            const newSpec = document.getElementById("newSpec").value.trim();
+
+            if (!oldSpec || !newSpec) {
+                renderList("addedOutput", [], "Paste or load both specs first.", "+");
+                renderList("removedOutput", [], "Paste or load both specs first.", "-");
+                renderList("breakingOutput", [], "Paste or load both specs first.", "⚠");
+                renderList("schemaOutput", [], "Paste or load both specs first.", "•");
+                return;
+            }
+
+            const result = currentExampleResult || {
+                added: ["GET /orders"],
+                removed: ["DELETE /customers/{id}"],
+                breaking: ["POST /invoices now requires currency"],
+                schemas: ["Invoice schema changed: amount is now required"]
+            };
+
+            renderList("addedOutput", result.added, "No added endpoints detected.", "+");
+            renderList("removedOutput", result.removed, "No removed endpoints detected.", "-");
+            renderList("breakingOutput", result.breaking, "No breaking changes detected.", "⚠");
+            renderList("schemaOutput", result.schemas, "No schema changes detected.", "•");
+        }
+
+        function clearResults() {
+            document.getElementById("addedOutput").innerHTML = "<p>Added endpoints or fields will appear here.</p>";
+            document.getElementById("removedOutput").innerHTML = "<p>Removed endpoints or fields will appear here.</p>";
+            document.getElementById("breakingOutput").innerHTML = "<p>Breaking changes will appear here.</p>";
+            document.getElementById("schemaOutput").innerHTML = "<p>Changed schemas or fields will appear here.</p>";
+        }
+
+        function clearSpecs() {
+            document.getElementById("oldSpec").value = "";
+            document.getElementById("newSpec").value = "";
+            document.getElementById("exampleLabel").textContent = "Load an example or paste your own OpenAPI snippets.";
+            currentExampleResult = null;
+            clearResults();
+        }
+    </script>
+
+    <footer class="border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
+        Built by Concilio Design AB · OpenAPI Diff
+    </footer>
+</body>
+
+</html>
