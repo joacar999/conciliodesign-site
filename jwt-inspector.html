@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Inspector | Concilio Design</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-white">
+
+    <nav class="w-full fixed top-0 left-0 z-50 bg-slate-950/70 backdrop-blur border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+
+            <a href="index.html" class="text-xl font-bold tracking-tight hover:text-cyan-400 transition">
+                Concilio Design
+            </a>
+
+            <div class="flex items-center gap-4 md:gap-8 text-slate-300 text-sm">
+                <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+                <a href="index.html#tools" class="hover:text-cyan-400 transition">Tools</a>
+                <a href="index.html#about" class="hover:text-cyan-400 transition">About</a>
+                <a href="https://github.com/joacar999/conciliodesign-site" target="_blank" rel="noopener noreferrer"
+                    class="hover:text-cyan-400 transition">
+                    GitHub
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <main class="pt-32 px-6 pb-32">
+
+        <section class="max-w-5xl mx-auto text-center mb-16">
+            <div class="mb-4 text-cyan-400 uppercase tracking-widest text-sm">
+                Security Tool
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+                JWT Inspector
+            </h1>
+
+            <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                Decode a JSON Web Token and inspect its header, payload and basic timing information.
+            </p>
+        </section>
+
+        <section class="max-w-5xl mx-auto">
+
+            <div class="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-5 text-amber-200 mb-8">
+                This tool decodes JWT content in your browser. It does not verify the signature. Do not paste real
+                production secrets or sensitive personal data into public tools.
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10 mb-8">
+
+                <label for="jwtInput" class="block text-xl font-semibold mb-4">
+                    Paste JWT token
+                </label>
+
+                <textarea id="jwtInput" rows="7"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-200 font-mono text-sm focus:outline-none focus:border-cyan-500"
+                    placeholder="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTYiLCJuYW1lIjoiSm9ha2ltIENhcmxzc29uIiwiYXVkIjoiYXBpOi8vZGVtbyIsImlzcyI6Imh0dHBzOi8vbG9naW4uZXhhbXBsZS5jb20iLCJpYXQiOjE3NzAwMDAwMDAsImV4cCI6MTc3MDAwMzYwMCwic2NvcGUiOiJVc2VyLlJlYWQgTWFpbC5SZWFkIiwicm9sZXMiOlsiQWRtaW4iXX0.signature"></textarea>
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                    <button onclick="decodeJwt()"
+                        class="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-4 rounded-2xl transition duration-300 shadow-xl shadow-cyan-500/20 hover:scale-[1.01]">
+                        Decode Token
+                    </button>
+
+                    <button onclick="loadExampleToken()"
+                        class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-8 py-4 rounded-2xl transition duration-300">
+                        Load Example Token
+                    </button>
+
+                    <button onclick="clearToken()"
+                        class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold px-8 py-4 rounded-2xl transition duration-300">
+                        Clear
+                    </button>
+                </div>
+
+                <div id="errorBox" class="hidden mt-6 bg-red-950/50 border border-red-500/30 rounded-2xl p-4 text-red-200">
+                </div>
+
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-cyan-500/20 shadow-xl shadow-cyan-500/5">
+                    <h2 class="text-2xl font-bold mb-4 text-cyan-400">
+                        Header
+                    </h2>
+                    <pre id="headerOutput"
+                        class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-cyan-100 font-mono overflow-x-auto min-h-40">Paste and decode a JWT to see the header.</pre>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-purple-500/20 shadow-xl shadow-purple-500/5">
+                    <h2 class="text-2xl font-bold mb-4 text-purple-400">
+                        Payload
+                    </h2>
+                    <pre id="payloadOutput"
+                        class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-purple-100 font-mono overflow-x-auto min-h-40">Paste and decode a JWT to see the payload.</pre>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/5">
+                    <h2 class="text-2xl font-bold mb-4 text-emerald-400">
+                        Token Info
+                    </h2>
+                    <div id="infoOutput" class="space-y-3 text-slate-300 text-sm">
+                        <p>Basic token information will appear here.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <section class="mt-16 bg-slate-900 rounded-2xl p-8 border border-slate-800">
+                <h2 class="text-3xl font-bold mb-4">
+                    What does this tool show?
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-6 text-slate-300">
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                        <h3 class="text-cyan-400 font-semibold mb-2">Header</h3>
+                        <p>Usually shows the token type and signing algorithm, for example RS256.</p>
+                    </div>
+
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                        <h3 class="text-purple-400 font-semibold mb-2">Payload</h3>
+                        <p>Contains claims such as user ID, audience, issuer, roles, scopes and expiry time.</p>
+                    </div>
+
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                        <h3 class="text-emerald-400 font-semibold mb-2">Signature</h3>
+                        <p>This page does not verify the signature. It only decodes the readable parts of the token.</p>
+                    </div>
+                </div>
+            </section>
+
+        </section>
+
+    </main>
+
+    <script>
+        function base64UrlDecode(input) {
+            const base64 = input.replace(/-/g, "+").replace(/_/g, "/");
+            const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, "=");
+            const decoded = atob(padded);
+            return decodeURIComponent(
+                decoded
+                    .split("")
+                    .map(char => "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2))
+                    .join("")
+            );
+        }
+
+        function formatDateFromUnix(value) {
+            if (!value || typeof value !== "number") {
+                return "Not present";
+            }
+
+            const date = new Date(value * 1000);
+            return date.toLocaleString();
+        }
+
+        function showError(message) {
+            const errorBox = document.getElementById("errorBox");
+            errorBox.textContent = message;
+            errorBox.classList.remove("hidden");
+        }
+
+        function clearError() {
+            const errorBox = document.getElementById("errorBox");
+            errorBox.textContent = "";
+            errorBox.classList.add("hidden");
+        }
+
+        function setOutput(header, payload) {
+            document.getElementById("headerOutput").textContent = JSON.stringify(header, null, 2);
+            document.getElementById("payloadOutput").textContent = JSON.stringify(payload, null, 2);
+
+            const now = Math.floor(Date.now() / 1000);
+            const isExpired = typeof payload.exp === "number" && payload.exp < now;
+            const hasExp = typeof payload.exp === "number";
+
+            document.getElementById("infoOutput").innerHTML = `
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+                    <div class="text-slate-500 text-xs uppercase tracking-widest mb-1">Algorithm</div>
+                    <div class="font-semibold text-white">${header.alg || "Not present"}</div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+                    <div class="text-slate-500 text-xs uppercase tracking-widest mb-1">Issuer</div>
+                    <div class="font-semibold text-white break-words">${payload.iss || "Not present"}</div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+                    <div class="text-slate-500 text-xs uppercase tracking-widest mb-1">Audience</div>
+                    <div class="font-semibold text-white break-words">${payload.aud || "Not present"}</div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+                    <div class="text-slate-500 text-xs uppercase tracking-widest mb-1">Issued at</div>
+                    <div class="font-semibold text-white">${formatDateFromUnix(payload.iat)}</div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+                    <div class="text-slate-500 text-xs uppercase tracking-widest mb-1">Expires</div>
+                    <div class="font-semibold ${isExpired ? "text-red-300" : "text-emerald-300"}">
+                        ${formatDateFromUnix(payload.exp)}
+                    </div>
+                    <div class="text-sm mt-1 ${isExpired ? "text-red-300" : "text-slate-400"}">
+                        ${hasExp ? (isExpired ? "Token is expired" : "Token is not expired") : "No expiry claim found"}
+                    </div>
+                </div>
+
+                <div class="bg-amber-950/40 border border-amber-500/30 rounded-xl p-4 text-amber-200">
+                    Signature is not verified by this tool.
+                </div>
+            `;
+        }
+
+        function decodeJwt() {
+            clearError();
+
+            const token = document.getElementById("jwtInput").value.trim();
+
+            if (!token) {
+                showError("Paste a JWT token first.");
+                return;
+            }
+
+            const parts = token.split(".");
+
+            if (parts.length !== 3) {
+                showError("A JWT should contain three parts separated by dots: header.payload.signature");
+                return;
+            }
+
+            try {
+                const header = JSON.parse(base64UrlDecode(parts[0]));
+                const payload = JSON.parse(base64UrlDecode(parts[1]));
+                setOutput(header, payload);
+            } catch (error) {
+                showError("Could not decode token. Make sure it is a valid JWT.");
+            }
+        }
+
+        function loadExampleToken() {
+            const header = {
+                alg: "RS256",
+                typ: "JWT",
+                kid: "demo-key-id"
+            };
+
+            const now = Math.floor(Date.now() / 1000);
+            const payload = {
+                sub: "1234567890",
+                name: "Example User",
+                iss: "https://login.example.com/demo-tenant",
+                aud: "api://demo-api",
+                iat: now,
+                exp: now + 3600,
+                scope: "User.Read Mail.Read",
+                roles: ["Reader", "IntegrationUser"]
+            };
+
+            const encode = value => {
+                return btoa(JSON.stringify(value))
+                    .replace(/\+/g, "-")
+                    .replace(/\//g, "_")
+                    .replace(/=+$/, "");
+            };
+
+            const token = `${encode(header)}.${encode(payload)}.demo-signature`;
+            document.getElementById("jwtInput").value = token;
+            decodeJwt();
+        }
+
+        function clearToken() {
+            document.getElementById("jwtInput").value = "";
+            document.getElementById("headerOutput").textContent = "Paste and decode a JWT to see the header.";
+            document.getElementById("payloadOutput").textContent = "Paste and decode a JWT to see the payload.";
+            document.getElementById("infoOutput").innerHTML = "<p>Basic token information will appear here.</p>";
+            clearError();
+        }
+    </script>
+
+    <footer class="border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
+        Built by Concilio Design AB · JWT Inspector
+    </footer>
+</body>
+
+</html>
