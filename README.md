@@ -6,9 +6,10 @@ Developer tools and interactive visualizations focused on:
 * OAuth2 / API security
 * OpenAPI tooling
 * JWT inspection and token debugging
+* API lifecycle and specification comparison
 * AI-assisted engineering workflows
 
-Live site:
+Live site:  
 https://conciliodesign.se
 
 ---
@@ -26,7 +27,7 @@ Features:
 * Runnable Python requests clients
 * Integration-focused code generation
 
-Live:
+Live:  
 https://web-production-afdbe.up.railway.app/
 
 ---
@@ -48,7 +49,7 @@ Features:
 * OAuth2 learning/reference tool
 * Beginner-friendly explanations
 
-Live:
+Live:  
 https://conciliodesign.se/oauth2-visualizer.html
 
 ---
@@ -67,8 +68,26 @@ Features:
 * Browser-only processing
 * No backend required
 
-Live:
+Live:  
 https://conciliodesign.se/jwt-inspector.html
+
+---
+
+### OpenAPI Diff
+
+Compare two OpenAPI specifications and visualize API changes.
+
+Features:
+
+* Compare OpenAPI versions
+* Detect added endpoints
+* Detect removed endpoints
+* Visualize breaking changes
+* Interactive example specifications
+* API lifecycle visualization
+
+Live:  
+https://conciliodesign.se/openapi-diff.html
 
 ---
 
@@ -154,11 +173,12 @@ The project intentionally focuses on:
 
 Planned future tools include:
 
-* OpenAPI Diff
 * ISO20022 Explorer
 * OAuth2 Playground
 * API Request Visualizer
 * Integration Architecture Visualizer
+* Kafka Event Visualizer
+* API Security Playground
 
 ---
 
@@ -177,3 +197,4 @@ Senior Integration Consultant specializing in:
 * Enterprise Integration Architecture
 * Backend Integration Engineering
 * Cloud Security
+* API Lifecycle Management
