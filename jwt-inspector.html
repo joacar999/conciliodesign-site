@@ -81,7 +81,8 @@
                     </button>
                 </div>
 
-                <div id="errorBox" class="hidden mt-6 bg-red-950/50 border border-red-500/30 rounded-2xl p-4 text-red-200">
+                <div id="errorBox"
+                    class="hidden mt-6 bg-red-950/50 border border-red-500/30 rounded-2xl p-4 text-red-200">
                 </div>
 
             </div>
@@ -247,24 +248,99 @@
             }
         }
 
-        function loadExampleToken() {
-            const header = {
-                alg: "RS256",
-                typ: "JWT",
-                kid: "demo-key-id"
-            };
+        let currentExampleIndex = 0;
 
+        function loadExampleToken() {
             const now = Math.floor(Date.now() / 1000);
-            const payload = {
-                sub: "1234567890",
-                name: "Example User",
-                iss: "https://login.example.com/demo-tenant",
-                aud: "api://demo-api",
-                iat: now,
-                exp: now + 3600,
-                scope: "User.Read Mail.Read",
-                roles: ["Reader", "IntegrationUser"]
-            };
+
+            const examples = [
+                {
+                    header: {
+                        alg: "RS256",
+                        typ: "JWT",
+                        kid: "entra-demo-key"
+                    },
+                    payload: {
+                        sub: "1234567890",
+                        name: "Example User",
+                        iss: "https://login.microsoftonline.com/demo-tenant",
+                        aud: "https://graph.microsoft.com",
+                        iat: now,
+                        exp: now + 3600,
+                        scope: "User.Read Mail.Read",
+                        roles: ["Reader", "IntegrationUser"]
+                    }
+                },
+                {
+                    header: {
+                        alg: "RS256",
+                        typ: "JWT",
+                        kid: "backend-service-key"
+                    },
+                    payload: {
+                        sub: "inventory-sync-service",
+                        iss: "https://login.example.com/services",
+                        aud: "api://inventory-api",
+                        iat: now,
+                        exp: now + 1800,
+                        scope: "orders.read orders.write",
+                        roles: ["ServiceAccount"]
+                    }
+                },
+                {
+                    header: {
+                        alg: "RS256",
+                        typ: "JWT",
+                        kid: "admin-portal-key"
+                    },
+                    payload: {
+                        sub: "admin-user-001",
+                        name: "Admin User",
+                        iss: "https://login.example.com/admin",
+                        aud: "api://admin-portal",
+                        iat: now,
+                        exp: now + 900,
+                        scope: "admin.read admin.write",
+                        roles: ["Admin", "Support"]
+                    }
+                },
+                {
+                    header: {
+                        alg: "ES256",
+                        typ: "JWT",
+                        kid: "mobile-app-key"
+                    },
+                    payload: {
+                        sub: "mobile-user-456",
+                        name: "Mobile App User",
+                        iss: "https://auth.example-mobile.com",
+                        aud: "api://mobile-backend",
+                        iat: now,
+                        exp: now + 2700,
+                        scope: "openid profile offline_access",
+                        roles: ["MobileUser"]
+                    }
+                },
+                {
+                    header: {
+                        alg: "RS256",
+                        typ: "JWT",
+                        kid: "github-demo-key"
+                    },
+                    payload: {
+                        sub: "joacar999",
+                        username: "joacar999",
+                        iss: "https://auth.example-devtools.com",
+                        aud: "api://developer-tools",
+                        iat: now,
+                        exp: now + 7200,
+                        scope: "repo:read workflow:read",
+                        roles: ["Developer"]
+                    }
+                }
+            ];
+
+            const selected = examples[currentExampleIndex];
 
             const encode = value => {
                 return btoa(JSON.stringify(value))
@@ -273,11 +349,12 @@
                     .replace(/=+$/, "");
             };
 
-            const token = `${encode(header)}.${encode(payload)}.demo-signature`;
-            document.getElementById("jwtInput").value = token;
-            decodeJwt();
-        }
+            const token = `${encode(selected.header)}.${encode(selected.payload)}.demo-signature`;
 
+            document.getElementById("jwtInput").value = token;
+
+            currentExampleIndex = (currentExampleIndex + 1) % examples.length;
+        }
         function clearToken() {
             document.getElementById("jwtInput").value = "";
             document.getElementById("headerOutput").textContent = "Paste and decode a JWT to see the header.";
