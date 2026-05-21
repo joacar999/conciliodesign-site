@@ -5,10 +5,12 @@ Developer tools and interactive visualizations focused on:
 * API integration
 * OAuth2 / API security
 * OpenAPI tooling
+* JWT inspection and token debugging
+* API lifecycle and specification comparison
 * AI-assisted engineering workflows
 
-Live site:
-[https://conciliodesign.se](https://conciliodesign.se)
+Live site:  
+https://conciliodesign.se
 
 ---
 
@@ -25,8 +27,8 @@ Features:
 * Runnable Python requests clients
 * Integration-focused code generation
 
-Live:
-[https://web-production-afdbe.up.railway.app/](https://web-production-afdbe.up.railway.app/)
+Live:  
+https://web-production-afdbe.up.railway.app/
 
 ---
 
@@ -45,9 +47,47 @@ Features:
 * Security recommendations
 * Real-world usage scenarios
 * OAuth2 learning/reference tool
+* Beginner-friendly explanations
 
-Live:
-[https://conciliodesign.se/oauth2-visualizer.html](https://conciliodesign.se/oauth2-visualizer.html)
+Live:  
+https://conciliodesign.se/oauth2-visualizer.html
+
+---
+
+### JWT Inspector
+
+Decode and inspect JSON Web Tokens directly in the browser.
+
+Features:
+
+* JWT header decoding
+* JWT payload inspection
+* Expiry and timing analysis
+* Scope and role inspection
+* Multiple example tokens
+* Browser-only processing
+* No backend required
+
+Live:  
+https://conciliodesign.se/jwt-inspector.html
+
+---
+
+### OpenAPI Diff
+
+Compare two OpenAPI specifications and visualize API changes.
+
+Features:
+
+* Compare OpenAPI versions
+* Detect added endpoints
+* Detect removed endpoints
+* Visualize breaking changes
+* Interactive example specifications
+* API lifecycle visualization
+
+Live:  
+https://conciliodesign.se/openapi-diff.html
 
 ---
 
@@ -88,7 +128,7 @@ git push
 
 Production deployment:
 
-* GitHub → Vercel (automatic deploy pipeline)
+* GitHub → Vercel automatic deployment pipeline
 
 ---
 
@@ -107,7 +147,8 @@ python -m http.server 8080
 ```
 
 Open:
-[http://localhost:8080](http://localhost:8080)
+
+http://localhost:8080
 
 ---
 
@@ -124,12 +165,26 @@ The project intentionally focuses on:
 * fast iteration
 * practical tooling
 * clean developer-oriented UX
+* educational visualizations for complex security concepts
+
+---
+
+## Roadmap
+
+Planned future tools include:
+
+* ISO20022 Explorer
+* OAuth2 Playground
+* API Request Visualizer
+* Integration Architecture Visualizer
+* Kafka Event Visualizer
+* API Security Playground
 
 ---
 
 ## Author
 
-Joakim Carlsson
+Joakim Carlsson  
 Founder & CEO — Concilio Design AB
 
 Senior Integration Consultant specializing in:
@@ -140,3 +195,6 @@ Senior Integration Consultant specializing in:
 * Python
 * SAP Integration
 * Enterprise Integration Architecture
+* Backend Integration Engineering
+* Cloud Security
+* API Lifecycle Management
