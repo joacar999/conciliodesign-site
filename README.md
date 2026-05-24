@@ -1,3 +1,13 @@
+Din README är redan stark. Det som saknas nu är främst:
+
+* Swagger Auth Detector
+* tydligare positioning
+* lite mer “platform/ecosystem”-känsla
+* lite mindre “list of hobby tools”
+
+Här är en uppdaterad version som känns mer mogen och sammanhängande:
+
+````markdown
 # Concilio Design
 
 Developer tools and interactive visualizations focused on:
@@ -14,51 +24,79 @@ https://conciliodesign.se
 
 ---
 
-## Current Tools
+# Vision
 
-### OpenAPI Generator
+Concilio Design is a lightweight developer tooling platform focused on practical API integration and security workflows.
+
+The goal is to build small, useful and developer-friendly tools that simplify:
+
+* API integration
+* OAuth2 and JWT troubleshooting
+* OpenAPI analysis
+* API lifecycle management
+* Integration debugging
+* AI-assisted engineering workflows
+
+The project intentionally emphasizes:
+
+* practical usefulness
+* simplicity
+* fast iteration
+* browser-based tooling
+* developer-oriented UX
+* educational visualization of complex concepts
+
+---
+
+# Current Tools
+
+## OpenAPI Generator
 
 Generate runnable Python integration clients directly from OpenAPI / Swagger specifications.
 
-Features:
+### Features
 
 * OpenAPI YAML + JSON support
 * Automatic endpoint parsing
 * Runnable Python requests clients
 * Integration-focused code generation
+* Production-oriented API client scaffolding
 
-Live:  
+### Live
+
 https://web-production-afdbe.up.railway.app/
 
 ---
 
-### OAuth2 Visualizer
+## OAuth2 Visualizer
 
 Interactive visual explanation of common OAuth2 authentication flows.
 
-Currently supports:
+### Currently supports
 
 * Authorization Code Flow
 * Client Credentials Flow
 
-Features:
+### Features
 
 * Token flow visualization
 * Security recommendations
 * Real-world usage scenarios
 * OAuth2 learning/reference tool
 * Beginner-friendly explanations
+* API security education
 
-Live:  
+### Live
+
 https://conciliodesign.se/oauth2-visualizer.html
 
 ---
 
-### JWT Inspector
+## JWT Inspector
 
 Decode and inspect JSON Web Tokens directly in the browser.
 
-Features:
+### Features
 
 * JWT header decoding
 * JWT payload inspection
@@ -67,17 +105,19 @@ Features:
 * Multiple example tokens
 * Browser-only processing
 * No backend required
+* JWT troubleshooting support
 
-Live:  
+### Live
+
 https://conciliodesign.se/jwt-inspector.html
 
 ---
 
-### OpenAPI Diff
+## OpenAPI Diff
 
 Compare two OpenAPI specifications and visualize API changes.
 
-Features:
+### Features
 
 * Compare OpenAPI versions
 * Detect added endpoints
@@ -85,27 +125,58 @@ Features:
 * Visualize breaking changes
 * Interactive example specifications
 * API lifecycle visualization
+* Contract evolution analysis
 
-Live:  
+### Live
+
 https://conciliodesign.se/openapi-diff.html
 
 ---
 
-## Tech Stack
+## Swagger Auth Detector
 
-Frontend:
+Analyze OpenAPI and Swagger specifications to understand how API authentication and authorization are configured.
+
+### Features
+
+* Detect OAuth2 flows
+* Detect JWT and Bearer authentication
+* Detect API key authentication
+* Detect OpenID Connect usage
+* Analyze endpoint security inheritance
+* Identify public endpoints
+* Visualize scopes and permissions
+* Highlight potential security issues
+
+### Example use cases
+
+* Understanding unfamiliar APIs
+* Debugging 401/403 issues
+* Reviewing OpenAPI security configuration
+* Learning OAuth2/OpenAPI security concepts
+* Detecting accidentally public endpoints
+
+### Live
+
+https://conciliodesign.se/swagger-auth-detector.html
+
+---
+
+# Tech Stack
+
+## Frontend
 
 * HTML
 * Tailwind CSS
 * Vanilla JavaScript
 
-Infrastructure:
+## Infrastructure
 
 * GitHub
 * Vercel
 * Railway
 
-Backend tooling:
+## Backend Tooling
 
 * Python
 * Flask
@@ -113,7 +184,37 @@ Backend tooling:
 
 ---
 
-## Development Workflow
+# Architecture Direction
+
+A core long-term focus of the project is building a reusable OpenAPI normalization layer.
+
+Vision:
+
+```text
+Swagger/OpenAPI
+        ↓
+Parser
+        ↓
+Normalized internal model
+        ↓
+AI enrichment
+        ↓
+Generators / analyzers / visualizers
+````
+
+The goal is to separate:
+
+* parsing
+* normalization
+* semantic analysis
+* visualization
+* code generation
+
+This enables reusable tooling across multiple API-related workflows.
+
+---
+
+# Development Workflow
 
 Feature development is performed using Git feature branches.
 
@@ -128,11 +229,13 @@ git push
 
 Production deployment:
 
-* GitHub → Vercel automatic deployment pipeline
+```text
+GitHub → Vercel automatic deployment pipeline
+```
 
 ---
 
-## Local Development
+# Local Development
 
 Clone repository:
 
@@ -148,43 +251,48 @@ python -m http.server 8080
 
 Open:
 
+```text
 http://localhost:8080
+```
 
 ---
 
-## Project Goals
+# Project Goals
 
-This repository is both:
+This repository serves both as:
 
 * a lightweight developer tools platform
 * a technical portfolio demonstrating API integration, OAuth2, backend engineering and developer tooling concepts
 
-The project intentionally focuses on:
+The project is intentionally designed to remain:
 
-* simplicity
-* fast iteration
-* practical tooling
-* clean developer-oriented UX
-* educational visualizations for complex security concepts
+* lightweight
+* understandable
+* practical
+* fast to iterate on
+* useful for real-world integration engineers
 
 ---
 
-## Roadmap
+# Roadmap
 
 Planned future tools include:
 
-* ISO20022 Explorer
 * OAuth2 Playground
+* API Error Decoder
+* Scope Analyzer
 * API Request Visualizer
 * Integration Architecture Visualizer
-* Kafka Event Visualizer
+* Kafka Event Formatter
+* Requirements → Test Cases
 * API Security Playground
+* ISO20022 Explorer
 
 ---
 
-## Author
+# Author
 
-Joakim Carlsson  
+Joakim Carlsson
 Founder & CEO — Concilio Design AB
 
 Senior Integration Consultant specializing in:
@@ -198,3 +306,6 @@ Senior Integration Consultant specializing in:
 * Backend Integration Engineering
 * Cloud Security
 * API Lifecycle Management
+
+```
+```
