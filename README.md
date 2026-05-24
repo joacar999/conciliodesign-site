@@ -1,4 +1,3 @@
-````markdown
 # Concilio Design
 
 <p align="center">
