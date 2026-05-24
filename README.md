@@ -13,6 +13,9 @@ Developer tools and interactive visualizations focused on:
 Live site:  
 https://conciliodesign.se
 
+Repository:
+https://github.com/joacar999/conciliodesign-site
+
 ---
 
 # Vision
@@ -35,7 +38,7 @@ The project intentionally emphasizes:
 * fast iteration
 * browser-based tooling
 * developer-oriented UX
-* educational visualization of complex concepts
+* clear visualization of complex security concepts
 
 ---
 
@@ -44,6 +47,7 @@ The project intentionally emphasizes:
 ## OpenAPI Generator
 
 Generate runnable Python integration clients directly from OpenAPI / Swagger specifications.
+
 
 ### Features
 
