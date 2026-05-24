@@ -1,6 +1,12 @@
 ````markdown
 # Concilio Design
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/eed4e286-44ec-4c8d-8092-f164dbe1b585"
+       alt="Concilio Design Integration Studio"
+       width="1000" />
+</p>
+
 Developer tools and interactive visualizations focused on:
 
 * API integration
@@ -47,7 +53,6 @@ The project intentionally emphasizes:
 ## OpenAPI Generator
 
 Generate runnable Python integration clients directly from OpenAPI / Swagger specifications.
-
 
 ### Features
 
@@ -195,7 +200,7 @@ Normalized internal model
 AI enrichment
         ↓
 Generators / analyzers / visualizers
-````
+```
 
 The goal is to separate:
 
@@ -302,5 +307,3 @@ Senior Integration Consultant specializing in:
 * Cloud Security
 * API Lifecycle Management
 
-```
-```
