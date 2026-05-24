@@ -1,12 +1,3 @@
-Din README är redan stark. Det som saknas nu är främst:
-
-* Swagger Auth Detector
-* tydligare positioning
-* lite mer “platform/ecosystem”-känsla
-* lite mindre “list of hobby tools”
-
-Här är en uppdaterad version som känns mer mogen och sammanhängande:
-
 ````markdown
 # Concilio Design
 
