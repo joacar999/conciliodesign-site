@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swagger Auth Detector | Concilio Design</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
+</head>
+
+<body class="bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 text-white">
+
+    <nav class="w-full fixed top-0 left-0 z-50 bg-slate-950/70 backdrop-blur border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-bold tracking-tight hover:text-cyan-400 transition">
+                Concilio Design
+            </a>
+
+            <div class="flex items-center gap-4 md:gap-8 text-slate-300 text-sm">
+                <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+                <a href="index.html#tools" class="hover:text-cyan-400 transition">Tools</a>
+                <a href="index.html#about" class="hover:text-cyan-400 transition">About</a>
+                <a href="https://github.com/joacar999/conciliodesign-site" target="_blank" rel="noopener noreferrer"
+                    class="hover:text-cyan-400 transition">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 px-6 pb-32">
+
+        <section class="max-w-5xl mx-auto text-center mb-16">
+            <div class="mb-4 text-cyan-400 uppercase tracking-widest text-sm">
+                API Security Tool
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+                Swagger Auth Detector
+            </h1>
+
+            <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                Paste an OpenAPI or Swagger specification and detect authentication schemes, OAuth2 flows,
+                required scopes and possible security gaps.
+            </p>
+        </section>
+
+        <section class="max-w-6xl mx-auto">
+
+            <div class="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-5 text-amber-200 mb-8">
+                This tool analyzes OpenAPI security definitions in your browser. It does not call external APIs
+                and does not validate real credentials or tokens.
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20 shadow-2xl shadow-cyan-500/10 mb-8">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold">Analyze API authentication</h2>
+                        <p class="text-slate-400 mt-1">
+                            Paste OpenAPI 3.x, Swagger JSON or YAML.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <select id="exampleSelector" onchange="loadSelectedExample()"
+                            class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-3 rounded-xl border border-slate-700">
+
+                            <option value="">Load Example...</option>
+
+                            <option value="oauth2">
+                                OAuth2 + JWT
+                            </option>
+
+                            <option value="apikey">
+                                API Key + Basic Auth
+                            </option>
+
+                            <option value="oidc">
+                                OpenID Connect + Public Endpoints
+                            </option>
+
+                        </select>
+
+                        <button onclick="analyzeSpec()"
+                            class="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-6 py-3 rounded-xl transition shadow-xl shadow-cyan-500/20 hover:scale-[1.01]">
+                            Detect Auth
+                        </button>
+
+                        <button onclick="clearAll()"
+                            class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold px-6 py-3 rounded-xl transition">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <textarea id="specInput" rows="18"
+                    class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-200 font-mono text-sm focus:outline-none focus:border-cyan-500"
+                    placeholder="Paste OpenAPI / Swagger JSON or YAML here..."></textarea>
+
+                <div id="errorBox"
+                    class="hidden mt-6 bg-red-950/50 border border-red-500/30 rounded-2xl p-4 text-red-200">
+                </div>
+            </div>
+
+            <div id="resultsSection" class="hidden">
+
+                <div class="grid lg:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-slate-900 rounded-2xl p-6 border border-cyan-500/20">
+                        <h3 class="text-xl font-bold mb-2 text-cyan-400">Auth Schemes</h3>
+                        <p id="schemeCount" class="text-4xl font-bold">0</p>
+                        <p class="text-slate-400 text-sm mt-2">Detected security schemes</p>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-2xl p-6 border border-purple-500/20">
+                        <h3 class="text-xl font-bold mb-2 text-purple-400">OAuth2 Flows</h3>
+                        <p id="oauthCount" class="text-4xl font-bold">0</p>
+                        <p class="text-slate-400 text-sm mt-2">Detected OAuth2 flows</p>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-2xl p-6 border border-emerald-500/20">
+                        <h3 class="text-xl font-bold mb-2 text-emerald-400">Scopes</h3>
+                        <p id="scopeCount" class="text-4xl font-bold">0</p>
+                        <p class="text-slate-400 text-sm mt-2">Declared OAuth scopes</p>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-2xl p-6 border border-blue-500/20">
+                        <h3 class="text-xl font-bold mb-2 text-blue-400">Endpoints</h3>
+                        <p id="endpointCount" class="text-4xl font-bold">0</p>
+                        <p class="text-slate-400 text-sm mt-2">Detected API operations</p>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-2xl p-6 border border-amber-500/20">
+                        <h3 class="text-xl font-bold mb-2 text-amber-400">Warnings</h3>
+                        <p id="warningCount" class="text-4xl font-bold">0</p>
+                        <p class="text-slate-400 text-sm mt-2">Potential security issues</p>
+                    </div>
+                </div>
+
+                <section class="bg-slate-900 rounded-2xl p-8 border border-blue-500/20 mb-8">
+                    <h2 class="text-3xl font-bold mb-6 text-blue-400">Spec Stats</h2>
+                    <div id="specStatsOutput" class="grid md:grid-cols-4 gap-4 text-slate-300"></div>
+                </section>
+
+                <section class="bg-slate-900 rounded-2xl p-8 border border-emerald-500/20 mb-8">
+                    <h2 class="text-3xl font-bold mb-6 text-emerald-400">Detected Technologies</h2>
+                    <div id="technologiesOutput" class="flex flex-wrap gap-3"></div>
+                </section>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <section class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/20">
+                        <h2 class="text-3xl font-bold mb-6 text-cyan-400">Detected Authentication</h2>
+                        <div id="schemesOutput" class="space-y-4 text-slate-300"></div>
+                    </section>
+
+                    <section class="bg-slate-900 rounded-2xl p-8 border border-amber-500/20">
+                        <h2 class="text-3xl font-bold mb-6 text-amber-400">Security Notes</h2>
+                        <div id="warningsOutput" class="space-y-4 text-slate-300"></div>
+                    </section>
+                </div>
+
+                <section class="mt-8 bg-slate-900 rounded-2xl p-8 border border-purple-500/20">
+                    <h2 class="text-3xl font-bold mb-6 text-purple-400">Endpoint Security Overview</h2>
+                    <div id="endpointOutput" class="space-y-3 text-slate-300"></div>
+                </section>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        const httpMethods = ["get", "post", "put", "patch", "delete", "options", "head"];
+
+        function parseSpec(raw) {
+            try {
+                return JSON.parse(raw);
+            } catch {
+                return jsyaml.load(raw);
+            }
+        }
+
+        function getSecuritySchemes(spec) {
+            if (spec.components && spec.components.securitySchemes) {
+                return spec.components.securitySchemes;
+            }
+
+            if (spec.securityDefinitions) {
+                return spec.securityDefinitions;
+            }
+
+            return {};
+        }
+
+        function getSchemeTypeLabel(scheme) {
+            if (!scheme || !scheme.type) return "Unknown";
+
+            if (scheme.type === "http" && scheme.scheme === "bearer") {
+                return scheme.bearerFormat ? `Bearer ${scheme.bearerFormat}` : "Bearer Token";
+            }
+
+            if (scheme.type === "apiKey") return "API Key";
+            if (scheme.type === "oauth2") return "OAuth2";
+            if (scheme.type === "openIdConnect") return "OpenID Connect";
+            if (scheme.type === "basic") return "Basic Auth";
+            if (scheme.type === "http" && scheme.scheme === "basic") return "Basic Auth";
+
+            return scheme.type;
+        }
+
+        function getFlowBadge(flowName) {
+            const labels = {
+                clientCredentials: "Client Credentials",
+                authorizationCode: "Authorization Code",
+                implicit: "Implicit",
+                password: "Password",
+                accessCode: "Access Code / Legacy",
+                application: "Application / Legacy"
+            };
+
+            return labels[flowName] || flowName;
+        }
+
+        function collectOAuthData(schemes) {
+            const flows = [];
+            const scopes = [];
+
+            Object.entries(schemes).forEach(([name, scheme]) => {
+                if (scheme.type !== "oauth2") return;
+
+                if (scheme.flows) {
+                    Object.entries(scheme.flows).forEach(([flowName, flow]) => {
+                        flows.push({
+                            schemeName: name,
+                            flowName,
+                            flowLabel: getFlowBadge(flowName),
+                            authorizationUrl: flow.authorizationUrl || "",
+                            tokenUrl: flow.tokenUrl || "",
+                            refreshUrl: flow.refreshUrl || ""
+                        });
+
+                        if (flow.scopes) {
+                            Object.entries(flow.scopes).forEach(([scope, description]) => {
+                                scopes.push({ scope, description, schemeName: name, flowName });
+                            });
+                        }
+                    });
+                }
+
+                if (scheme.flow) {
+                    flows.push({
+                        schemeName: name,
+                        flowName: scheme.flow,
+                        flowLabel: getFlowBadge(scheme.flow),
+                        authorizationUrl: scheme.authorizationUrl || "",
+                        tokenUrl: scheme.tokenUrl || "",
+                        refreshUrl: ""
+                    });
+
+                    if (scheme.scopes) {
+                        Object.entries(scheme.scopes).forEach(([scope, description]) => {
+                            scopes.push({ scope, description, schemeName: name, flowName: scheme.flow });
+                        });
+                    }
+                }
+            });
+
+            return { flows, scopes };
+        }
+
+        function collectEndpoints(spec) {
+            const endpoints = [];
+
+            Object.entries(spec.paths || {}).forEach(([path, pathItem]) => {
+                Object.entries(pathItem || {}).forEach(([method, operation]) => {
+                    if (!httpMethods.includes(method.toLowerCase())) return;
+
+                    endpoints.push({
+                        method: method.toUpperCase(),
+                        path,
+                        summary: operation.summary || operation.operationId || "",
+                        security: operation.security !== undefined ? operation.security : null
+                    });
+                });
+            });
+
+            return endpoints;
+        }
+
+        function detectTechnologies(schemeEntries, oauthData) {
+            const technologies = [];
+
+            const hasOAuth2 = schemeEntries.some(([_, scheme]) => scheme.type === "oauth2");
+            const hasJwt = schemeEntries.some(([_, scheme]) =>
+                scheme.type === "http" &&
+                scheme.scheme === "bearer" &&
+                String(scheme.bearerFormat || "").toLowerCase() === "jwt"
+            );
+            const hasBearer = schemeEntries.some(([_, scheme]) => scheme.type === "http" && scheme.scheme === "bearer");
+            const hasApiKey = schemeEntries.some(([_, scheme]) => scheme.type === "apiKey");
+            const hasBasic = schemeEntries.some(([_, scheme]) =>
+                scheme.type === "basic" || (scheme.type === "http" && scheme.scheme === "basic")
+            );
+            const hasOidc = schemeEntries.some(([_, scheme]) => scheme.type === "openIdConnect");
+            const hasScopes = oauthData.scopes.length > 0;
+
+            if (hasOAuth2) technologies.push("OAuth2");
+            if (hasJwt) technologies.push("JWT");
+            else if (hasBearer) technologies.push("Bearer Token");
+            if (hasApiKey) technologies.push("API Key");
+            if (hasBasic) technologies.push("Basic Auth");
+            if (hasOidc) technologies.push("OpenID Connect");
+            if (hasScopes) technologies.push("Scope-based authorization");
+
+            return technologies;
+        }
+
+        function analyzeSpec() {
+            clearError();
+
+            const raw = document.getElementById("specInput").value.trim();
+
+            if (!raw) {
+                showError("Please paste an OpenAPI or Swagger specification.");
+                return;
+            }
+
+            let spec;
+
+            try {
+                spec = parseSpec(raw);
+            } catch (error) {
+                showError("Could not parse the input as JSON or YAML.");
+                return;
+            }
+
+            if (!spec || typeof spec !== "object") {
+                showError("Invalid OpenAPI / Swagger document.");
+                return;
+            }
+
+            const schemes = getSecuritySchemes(spec);
+            const schemeEntries = Object.entries(schemes);
+            const globalSecurity = spec.security || [];
+            const endpoints = collectEndpoints(spec);
+            const oauthData = collectOAuthData(schemes);
+            const warnings = buildWarnings(spec, schemeEntries, globalSecurity, endpoints, oauthData);
+            const technologies = detectTechnologies(schemeEntries, oauthData);
+
+            renderSummary(schemeEntries, oauthData, warnings, endpoints);
+            renderSpecStats(spec, schemeEntries, endpoints, globalSecurity);
+            renderTechnologies(technologies);
+            renderSchemes(schemeEntries, oauthData);
+            renderWarnings(warnings);
+            renderEndpoints(endpoints, globalSecurity);
+
+            document.getElementById("resultsSection").classList.remove("hidden");
+        }
+
+        function buildWarnings(spec, schemeEntries, globalSecurity, endpoints, oauthData) {
+            const warnings = [];
+
+            if (!spec.openapi && !spec.swagger) {
+                warnings.push("The document does not clearly declare an OpenAPI or Swagger version.");
+            }
+
+            if (schemeEntries.length === 0) {
+                warnings.push("No security schemes were found.");
+            }
+
+            if (schemeEntries.length > 0 && globalSecurity.length === 0) {
+                warnings.push("Security schemes exist, but no global security requirement is defined.");
+            }
+
+            schemeEntries.forEach(([name, scheme]) => {
+                if (scheme.type === "http" && scheme.scheme === "bearer" && !scheme.bearerFormat) {
+                    warnings.push(`Bearer scheme "${name}" does not specify bearerFormat, for example JWT.`);
+                }
+
+                if (scheme.type === "apiKey" && (!scheme.name || !scheme.in)) {
+                    warnings.push(`API key scheme "${name}" is missing name or location.`);
+                }
+
+                if (scheme.type === "oauth2" && oauthData.flows.filter(f => f.schemeName === name).length === 0) {
+                    warnings.push(`OAuth2 scheme "${name}" does not define any flows.`);
+                }
+            });
+
+            const publicEndpoints = endpoints.filter(endpoint => {
+                if (endpoint.security === null) return false;
+                return Array.isArray(endpoint.security) && endpoint.security.length === 0;
+            });
+
+            if (publicEndpoints.length > 0) {
+                warnings.push(`${publicEndpoints.length} endpoint(s) explicitly override security with an empty security requirement.`);
+            }
+
+            return warnings;
+        }
+
+        function renderSummary(schemeEntries, oauthData, warnings, endpoints) {
+            document.getElementById("schemeCount").textContent = schemeEntries.length;
+            document.getElementById("oauthCount").textContent = oauthData.flows.length;
+            document.getElementById("scopeCount").textContent = oauthData.scopes.length;
+            document.getElementById("endpointCount").textContent = endpoints.length;
+            document.getElementById("warningCount").textContent = warnings.length;
+        }
+
+        function renderSpecStats(spec, schemeEntries, endpoints, globalSecurity) {
+            const protectedEndpoints = endpoints.filter(endpoint => {
+                if (endpoint.security === null) return globalSecurity && globalSecurity.length > 0;
+                return Array.isArray(endpoint.security) && endpoint.security.length > 0;
+            }).length;
+
+            const stats = [
+                { label: "Spec version", value: spec.openapi || (spec.swagger ? `Swagger ${spec.swagger}` : "Unknown") },
+                { label: "API title", value: spec.info && spec.info.title ? spec.info.title : "Not declared" },
+                { label: "Security schemes", value: schemeEntries.length },
+                { label: "Protected endpoints", value: protectedEndpoints }
+            ];
+
+            document.getElementById("specStatsOutput").innerHTML = stats.map(stat => `
+            <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                <p class="text-slate-400 text-sm mb-2">${escapeHtml(stat.label)}</p>
+                <p class="text-xl font-bold break-words">${escapeHtml(stat.value)}</p>
+            </div>
+        `).join("");
+        }
+
+        function renderTechnologies(technologies) {
+            const container = document.getElementById("technologiesOutput");
+
+            if (technologies.length === 0) {
+                container.innerHTML = `<p class="text-slate-400">No authentication technologies detected.</p>`;
+                return;
+            }
+
+            container.innerHTML = technologies.map(technology => `
+            <span class="bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-4 py-2 rounded-full text-sm font-semibold">
+                ✓ ${escapeHtml(technology)}
+            </span>
+        `).join("");
+        }
+
+        function renderSchemes(schemeEntries, oauthData) {
+            const container = document.getElementById("schemesOutput");
+            container.innerHTML = "";
+
+            if (schemeEntries.length === 0) {
+                container.innerHTML = `<p class="text-slate-400">No authentication schemes found.</p>`;
+                return;
+            }
+
+            schemeEntries.forEach(([name, scheme]) => {
+                const typeLabel = getSchemeTypeLabel(scheme);
+                const details = [];
+
+                if (scheme.in) details.push(`Location: ${scheme.in}`);
+                if (scheme.name) details.push(`Name: ${scheme.name}`);
+                if (scheme.scheme) details.push(`HTTP scheme: ${scheme.scheme}`);
+                if (scheme.bearerFormat) details.push(`Bearer format: ${scheme.bearerFormat}`);
+                if (scheme.openIdConnectUrl) details.push(`OpenID Connect URL: ${scheme.openIdConnectUrl}`);
+
+                const schemeFlows = oauthData.flows.filter(flow => flow.schemeName === name);
+                const schemeScopes = oauthData.scopes.filter(scope => scope.schemeName === name);
+
+                container.innerHTML += `
+                <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                    <div class="flex items-center justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-bold">${escapeHtml(name)}</h3>
+                        <span class="bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 px-3 py-1 rounded-full text-xs font-semibold">
+                            ${escapeHtml(typeLabel)}
+                        </span>
+                    </div>
+
+                    <div class="text-sm text-slate-400 space-y-1">
+                        ${details.map(detail => `<p>${escapeHtml(detail)}</p>`).join("") || "<p>No additional details declared.</p>"}
+                    </div>
+
+                    ${schemeFlows.length ? `
+                        <div class="mt-4">
+                            <h4 class="text-purple-400 font-semibold mb-2">OAuth2 flows</h4>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                ${schemeFlows.map(flow => `
+                                    <span class="bg-purple-500/10 text-purple-300 border border-purple-500/30 px-3 py-1 rounded-full text-xs font-semibold">
+                                        ${escapeHtml(flow.flowLabel)}
+                                    </span>
+                                `).join("")}
+                            </div>
+
+                            <div class="space-y-2 text-sm">
+                                ${schemeFlows.map(flow => `
+                                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
+                                        <p class="font-semibold">${escapeHtml(flow.flowLabel)}</p>
+
+                                        ${flow.authorizationUrl ? copyRow("authorizationUrl", flow.authorizationUrl) : ""}
+                                        ${flow.tokenUrl ? copyRow("tokenUrl", flow.tokenUrl) : ""}
+                                        ${flow.refreshUrl ? copyRow("refreshUrl", flow.refreshUrl) : ""}
+                                    </div>
+                                `).join("")}
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${schemeScopes.length ? `
+                        <div class="mt-4">
+                            <h4 class="text-emerald-400 font-semibold mb-2">Scopes</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${schemeScopes.map(scope => `
+                                    <span title="${escapeHtml(scope.description || "")}"
+                                          class="bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs">
+                                        ${escapeHtml(scope.scope)}
+                                        <button onclick="copyToClipboard('${escapeForJs(scope.scope)}')"
+                                                class="ml-2 text-emerald-200 hover:text-white">
+                                            Copy
+                                        </button>
+                                    </span>
+                                `).join("")}
+                            </div>
+                        </div>
+                    ` : ""}
+                </div>
+            `;
+            });
+        }
+
+        function copyRow(label, value) {
+            return `
+            <div class="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-slate-950 border border-slate-800 rounded-lg p-2">
+                <span class="text-slate-400 break-all">${escapeHtml(label)}: ${escapeHtml(value)}</span>
+                <button onclick="copyToClipboard('${escapeForJs(value)}')"
+                        class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded-lg">
+                    Copy
+                </button>
+            </div>
+        `;
+        }
+
+        function renderWarnings(warnings) {
+            const container = document.getElementById("warningsOutput");
+            container.innerHTML = "";
+
+            if (warnings.length === 0) {
+                container.innerHTML = `
+                <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-5 text-emerald-200">
+                    No obvious authentication warnings found.
+                </div>
+            `;
+                return;
+            }
+
+            warnings.forEach(warning => {
+                container.innerHTML += `
+                <div class="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-5 text-amber-200">
+                    ${escapeHtml(warning)}
+                </div>
+            `;
+            });
+        }
+
+        function renderEndpoints(endpoints, globalSecurity) {
+            const container = document.getElementById("endpointOutput");
+            container.innerHTML = "";
+
+            if (endpoints.length === 0) {
+                container.innerHTML = `<p class="text-slate-400">No endpoints found.</p>`;
+                return;
+            }
+
+            endpoints.forEach(endpoint => {
+                let securityLabel = "Uses inherited global security";
+
+                if (endpoint.security !== null) {
+                    if (Array.isArray(endpoint.security) && endpoint.security.length === 0) {
+                        securityLabel = "Explicitly public / no auth";
+                    } else {
+                        securityLabel = "Endpoint-specific security";
+                    }
+                } else if (!globalSecurity || globalSecurity.length === 0) {
+                    securityLabel = "No global security defined";
+                }
+
+                container.innerHTML += `
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                        <span class="text-cyan-400 font-mono text-sm">${escapeHtml(endpoint.method)}</span>
+                        <span class="font-mono text-slate-200 ml-2">${escapeHtml(endpoint.path)}</span>
+                        ${endpoint.summary ? `<p class="text-slate-400 text-sm mt-1">${escapeHtml(endpoint.summary)}</p>` : ""}
+                    </div>
+                    <span class="text-xs px-3 py-1 rounded-full border border-slate-700 text-slate-300 bg-slate-900">
+                        ${escapeHtml(securityLabel)}
+                    </span>
+                </div>
+            `;
+            });
+        }
+
+        function loadSelectedExample() {
+
+            const selected = document.getElementById("exampleSelector").value;
+
+            if (selected === "oauth2") {
+
+                document.getElementById("specInput").value = `openapi: 3.0.3
+info:
+  title: Orders API
+  version: 1.0.0
+
+components:
+  securitySchemes:
+
+    OAuth2ClientCredentials:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.example.com/oauth2/token
+          scopes:
+            orders.read: Read orders
+            orders.write: Create and update orders
+
+    BearerJwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - OAuth2ClientCredentials:
+      - orders.read
+
+paths:
+  /orders:
+    get:
+      summary: List orders
+
+    post:
+      summary: Create order
+      security:
+        - OAuth2ClientCredentials:
+            - orders.write
+
+  /health:
+    get:
+      summary: Health check
+      security: []`;
+            }
+
+            else if (selected === "apikey") {
+
+                document.getElementById("specInput").value = `swagger: "2.0"
+
+info:
+  title: Legacy Payments API
+  version: "1.0"
+
+securityDefinitions:
+
+  ApiKeyAuth:
+    type: apiKey
+    name: X-API-Key
+    in: header
+
+  BasicAuth:
+    type: basic
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+
+  /payments:
+    get:
+      summary: List payments
+
+  /admin:
+    get:
+      summary: Admin operation
+      security:
+        - BasicAuth: []`;
+            }
+
+            else if (selected === "oidc") {
+
+                document.getElementById("specInput").value = `openapi: 3.0.3
+
+info:
+  title: Identity API
+  version: 2.1.0
+
+components:
+  securitySchemes:
+
+    OpenId:
+      type: openIdConnect
+      openIdConnectUrl: https://identity.example.com/.well-known/openid-configuration
+
+security:
+  - OpenId: []
+
+paths:
+
+  /profile:
+    get:
+      summary: User profile
+
+  /public-info:
+    get:
+      summary: Public information
+      security: []
+
+  /tokens:
+    post:
+      summary: Token inspection`;
+            }
+
+            clearError();
+        }
+
+        function clearAll() {
+            document.getElementById("specInput").value = "";
+            document.getElementById("resultsSection").classList.add("hidden");
+            clearError();
+        }
+
+        async function copyToClipboard(value) {
+            try {
+                await navigator.clipboard.writeText(value);
+            } catch {
+                const temp = document.createElement("textarea");
+                temp.value = value;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand("copy");
+                document.body.removeChild(temp);
+            }
+        }
+
+        function showError(message) {
+            const errorBox = document.getElementById("errorBox");
+            errorBox.textContent = message;
+            errorBox.classList.remove("hidden");
+        }
+
+        function clearError() {
+            const errorBox = document.getElementById("errorBox");
+            errorBox.textContent = "";
+            errorBox.classList.add("hidden");
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function escapeForJs(value) {
+            return String(value)
+                .replaceAll("\\", "\\\\")
+                .replaceAll("'", "\\'")
+                .replaceAll("\n", "\\n")
+                .replaceAll("\r", "");
+        }
+    </script>
+
+</body>
+
+</html>
