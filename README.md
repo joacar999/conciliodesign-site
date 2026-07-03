@@ -172,8 +172,8 @@ https://conciliodesign.se/swagger-auth-detector.html
 ## Infrastructure
 
 * GitHub
-* Vercel
-* Railway
+* Vercel (hosting the webapplicaion)
+* Railway (hosting the code-generator)
 
 ## Backend Tooling
 
